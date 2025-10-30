@@ -62,53 +62,86 @@ const AdminDashboard = ({ user, onLogout }: AdminDashboardProps) => {
     setEditMode(false);
   };
 
+  const [activeTab, setActiveTab] = useState('operators');
+
   return (
-    <div className="min-h-screen bg-gray-900">
-      <header className="bg-gradient-to-r from-purple-600 to-violet-600 text-white shadow-lg">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-4">
-            <Icon name="Shield" size={32} />
-            <div>
-              <h1 className="text-2xl font-bold">Панель Супер-Админа</h1>
-              <p className="text-sm text-purple-100">Полный контроль системы</p>
-            </div>
+    <div className="min-h-screen bg-gray-900 flex">
+      {/* Sidebar */}
+      <div className="w-64 bg-gray-800 border-r border-purple-500/30 flex flex-col">
+        <div className="p-6 bg-gradient-to-br from-purple-600 to-violet-600">
+          <div className="flex items-center gap-3 mb-2">
+            <Icon name="Shield" size={28} className="text-white" />
+            <h1 className="text-lg font-bold text-white">Супер-Админ</h1>
           </div>
-
-          <div className="flex items-center gap-4">
-            <Badge className="bg-yellow-500 text-yellow-900 px-3 py-1">
-              <Icon name="Crown" size={16} className="mr-1" />
-              Супер-Админ
-            </Badge>
-            <div className="flex items-center gap-2 text-white">
-              <Icon name="User" size={18} />
-              <span className="font-medium">{user.login}</span>
-            </div>
-            <Button variant="secondary" onClick={onLogout}>
-              <Icon name="LogOut" size={18} className="mr-2" />
-              Выход
-            </Button>
-          </div>
+          <p className="text-xs text-purple-100">Полный контроль системы</p>
         </div>
-      </header>
 
-      <div className="p-6">
-        <Tabs defaultValue="operators" className="space-y-6">
-          <TabsList className="bg-gray-800 shadow-sm border border-purple-500/30">
-            <TabsTrigger value="operators" className="gap-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white">
-              <Icon name="Users" size={18} />
-              Операторы
-            </TabsTrigger>
-            <TabsTrigger value="analytics" className="gap-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white">
-              <Icon name="BarChart3" size={18} />
-              Аналитика
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="gap-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white">
-              <Icon name="Settings" size={18} />
-              Настройки сайта
-            </TabsTrigger>
-          </TabsList>
+        <div className="flex-1 p-4">
+          <nav className="space-y-2">
+            <button
+              onClick={() => setActiveTab('operators')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                activeTab === 'operators'
+                  ? 'bg-purple-600 text-white'
+                  : 'text-gray-300 hover:bg-gray-700'
+              }`}
+            >
+              <Icon name="Users" size={20} />
+              <span className="font-medium">Операторы</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('analytics')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                activeTab === 'analytics'
+                  ? 'bg-purple-600 text-white'
+                  : 'text-gray-300 hover:bg-gray-700'
+              }`}
+            >
+              <Icon name="BarChart3" size={20} />
+              <span className="font-medium">Аналитика</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('settings')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                activeTab === 'settings'
+                  ? 'bg-purple-600 text-white'
+                  : 'text-gray-300 hover:bg-gray-700'
+              }`}
+            >
+              <Icon name="Settings" size={20} />
+              <span className="font-medium">Настройки</span>
+            </button>
+          </nav>
+        </div>
 
-          <TabsContent value="operators" className="space-y-4">
+        <div className="p-4 border-t border-gray-700">
+          <div className="flex items-center gap-3 mb-3">
+            <Badge className="bg-yellow-500 text-yellow-900">
+              <Icon name="Crown" size={14} className="mr-1" />
+              Админ
+            </Badge>
+          </div>
+          <div className="flex items-center gap-2 text-gray-300 mb-3">
+            <Icon name="User" size={16} />
+            <span className="text-sm font-medium">{user.login}</span>
+          </div>
+          <Button 
+            variant="secondary" 
+            onClick={onLogout}
+            className="w-full justify-start"
+            size="sm"
+          >
+            <Icon name="LogOut" size={16} className="mr-2" />
+            Выход
+          </Button>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 overflow-auto">
+        <Tabs value={activeTab} className="h-full">
+
+          <TabsContent value="operators" className="space-y-4 p-6">
             <Card className="p-6 bg-gray-800 border-purple-500/30">
               <h2 className="text-xl font-bold mb-4 text-white">Управление операторами</h2>
               
@@ -159,7 +192,7 @@ const AdminDashboard = ({ user, onLogout }: AdminDashboardProps) => {
             </Card>
           </TabsContent>
 
-          <TabsContent value="analytics" className="space-y-4">
+          <TabsContent value="analytics" className="space-y-4 p-6">
             <div className="grid md:grid-cols-3 gap-4">
               <Card className="p-6 bg-gray-800 border-purple-500/30">
                 <div className="flex items-center justify-between">
@@ -201,7 +234,7 @@ const AdminDashboard = ({ user, onLogout }: AdminDashboardProps) => {
             </div>
           </TabsContent>
 
-          <TabsContent value="settings" className="space-y-4">
+          <TabsContent value="settings" className="space-y-4 p-6">
             <Card className="p-6 bg-gray-800 border-purple-500/30">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-white">Настройки внешнего вида</h2>
