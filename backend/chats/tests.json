@@ -1,0 +1,36 @@
+{
+  "tests": [
+    {
+      "name": "OPTIONS request for CORS",
+      "method": "OPTIONS",
+      "path": "/",
+      "expectedStatus": 200
+    },
+    {
+      "name": "Create new chat",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "action": "create_chat",
+        "session_id": "test-session-123",
+        "client_name": "Тестовый клиент"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true,
+        "chat_id": "number"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Get chats list",
+      "method": "GET",
+      "path": "/?action=list",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "chats": "array"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

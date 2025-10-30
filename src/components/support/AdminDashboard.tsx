@@ -1,0 +1,295 @@
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import Icon from '@/components/ui/icon';
+import { useToast } from '@/hooks/use-toast';
+
+interface User {
+  login: string;
+  role: string;
+}
+
+interface AdminDashboardProps {
+  user: User;
+  onLogout: () => void;
+}
+
+type OperatorStatus = 'online' | 'jira' | 'break' | 'offline';
+
+interface Operator {
+  id: number;
+  name: string;
+  status: OperatorStatus;
+  activeChats: number;
+  totalChats: number;
+}
+
+const statusConfig = {
+  online: { label: 'На линии', color: 'bg-green-500' },
+  jira: { label: 'Обработка Jira', color: 'bg-blue-500' },
+  break: { label: 'Отдых', color: 'bg-yellow-500' },
+  offline: { label: 'Не в сети', color: 'bg-gray-500' },
+};
+
+const AdminDashboard = ({ user, onLogout }: AdminDashboardProps) => {
+  const { toast } = useToast();
+  const [operators] = useState<Operator[]>([
+    { id: 1, name: 'Оператор 1', status: 'online', activeChats: 3, totalChats: 15 },
+    { id: 2, name: 'Оператор 2', status: 'jira', activeChats: 1, totalChats: 8 },
+    { id: 3, name: 'Оператор 3', status: 'break', activeChats: 0, totalChats: 12 },
+    { id: 4, name: 'Оператор 4', status: 'offline', activeChats: 0, totalChats: 5 },
+  ]);
+
+  const [editMode, setEditMode] = useState(false);
+  const [siteSettings, setSiteSettings] = useState({
+    title: 'Поддержка',
+    welcomeMessage: 'Здравствуйте! Чем могу помочь?',
+    primaryColor: '#2563eb',
+  });
+
+  const handleSaveSettings = () => {
+    toast({
+      title: 'Настройки сохранены',
+      description: 'Изменения успешно применены',
+    });
+    setEditMode(false);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <header className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">
+        <div className="flex items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-4">
+            <Icon name="Shield" size={32} />
+            <div>
+              <h1 className="text-2xl font-bold">Панель Супер-Админа</h1>
+              <p className="text-sm text-purple-100">Полный контроль системы</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <Badge className="bg-yellow-500 text-yellow-900 px-3 py-1">
+              <Icon name="Crown" size={16} className="mr-1" />
+              Супер-Админ
+            </Badge>
+            <div className="flex items-center gap-2 text-white">
+              <Icon name="User" size={18} />
+              <span className="font-medium">{user.login}</span>
+            </div>
+            <Button variant="secondary" onClick={onLogout}>
+              <Icon name="LogOut" size={18} className="mr-2" />
+              Выход
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      <div className="p-6">
+        <Tabs defaultValue="operators" className="space-y-6">
+          <TabsList className="bg-white shadow-sm">
+            <TabsTrigger value="operators" className="gap-2">
+              <Icon name="Users" size={18} />
+              Операторы
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="gap-2">
+              <Icon name="BarChart3" size={18} />
+              Аналитика
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="gap-2">
+              <Icon name="Settings" size={18} />
+              Настройки сайта
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="operators" className="space-y-4">
+            <Card className="p-6">
+              <h2 className="text-xl font-bold mb-4">Управление операторами</h2>
+              
+              <div className="grid gap-4">
+                {operators.map((operator) => {
+                  const status = statusConfig[operator.status];
+                  return (
+                    <div
+                      key={operator.id}
+                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                          <Icon name="User" size={24} className="text-purple-600" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-900">{operator.name}</p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className={`w-2 h-2 rounded-full ${status.color}`} />
+                            <span className="text-sm text-gray-600">{status.label}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-6">
+                        <div className="text-center">
+                          <p className="text-2xl font-bold text-gray-900">{operator.activeChats}</p>
+                          <p className="text-xs text-gray-600">Активных</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-2xl font-bold text-gray-900">{operator.totalChats}</p>
+                          <p className="text-xs text-gray-600">Всего</p>
+                        </div>
+                        <Button variant="outline" size="sm">
+                          <Icon name="Settings" size={16} className="mr-2" />
+                          Управление
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <Button className="mt-4 bg-purple-600 hover:bg-purple-700">
+                <Icon name="UserPlus" size={18} className="mr-2" />
+                Добавить оператора
+              </Button>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="analytics" className="space-y-4">
+            <div className="grid md:grid-cols-3 gap-4">
+              <Card className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600">Всего диалогов</p>
+                    <p className="text-3xl font-bold text-gray-900 mt-2">142</p>
+                  </div>
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                    <Icon name="MessageSquare" size={24} className="text-blue-600" />
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600">Активных операторов</p>
+                    <p className="text-3xl font-bold text-gray-900 mt-2">
+                      {operators.filter((o) => o.status === 'online').length}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                    <Icon name="Users" size={24} className="text-green-600" />
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600">Среднее время ответа</p>
+                    <p className="text-3xl font-bold text-gray-900 mt-2">2.3м</p>
+                  </div>
+                  <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                    <Icon name="Clock" size={24} className="text-yellow-600" />
+                  </div>
+                </div>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="settings" className="space-y-4">
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold">Настройки внешнего вида</h2>
+                <Button
+                  variant={editMode ? 'default' : 'outline'}
+                  onClick={() => setEditMode(!editMode)}
+                >
+                  <Icon name={editMode ? 'Save' : 'Edit'} size={18} className="mr-2" />
+                  {editMode ? 'Готово' : 'Редактировать'}
+                </Button>
+              </div>
+
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="title">Заголовок чата</Label>
+                  <Input
+                    id="title"
+                    value={siteSettings.title}
+                    onChange={(e) => setSiteSettings({ ...siteSettings, title: e.target.value })}
+                    disabled={!editMode}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="welcome">Приветственное сообщение</Label>
+                  <Textarea
+                    id="welcome"
+                    value={siteSettings.welcomeMessage}
+                    onChange={(e) => setSiteSettings({ ...siteSettings, welcomeMessage: e.target.value })}
+                    disabled={!editMode}
+                    rows={3}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="color">Основной цвет</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="color"
+                      type="color"
+                      value={siteSettings.primaryColor}
+                      onChange={(e) => setSiteSettings({ ...siteSettings, primaryColor: e.target.value })}
+                      disabled={!editMode}
+                      className="w-20 h-10"
+                    />
+                    <Input
+                      value={siteSettings.primaryColor}
+                      onChange={(e) => setSiteSettings({ ...siteSettings, primaryColor: e.target.value })}
+                      disabled={!editMode}
+                    />
+                  </div>
+                </div>
+
+                {editMode && (
+                  <Button onClick={handleSaveSettings} className="w-full bg-purple-600 hover:bg-purple-700">
+                    <Icon name="Save" size={18} className="mr-2" />
+                    Сохранить изменения
+                  </Button>
+                )}
+              </div>
+
+              <div className="mt-8 pt-6 border-t">
+                <h3 className="font-semibold mb-4 text-gray-900">Дополнительные возможности</h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <Button variant="outline" className="justify-start">
+                    <Icon name="Palette" size={18} className="mr-2" />
+                    Темы оформления
+                  </Button>
+                  <Button variant="outline" className="justify-start">
+                    <Icon name="Bell" size={18} className="mr-2" />
+                    Уведомления
+                  </Button>
+                  <Button variant="outline" className="justify-start">
+                    <Icon name="Mail" size={18} className="mr-2" />
+                    Email-интеграции
+                  </Button>
+                  <Button variant="outline" className="justify-start">
+                    <Icon name="Zap" size={18} className="mr-2" />
+                    Автоответы
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  );
+};
+
+export default AdminDashboard;
