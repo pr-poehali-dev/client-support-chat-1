@@ -63,8 +63,8 @@ const AdminDashboard = ({ user, onLogout }: AdminDashboardProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">
+    <div className="min-h-screen bg-gray-900">
+      <header className="bg-gradient-to-r from-purple-600 to-violet-600 text-white shadow-lg">
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center gap-4">
             <Icon name="Shield" size={32} />
@@ -93,16 +93,16 @@ const AdminDashboard = ({ user, onLogout }: AdminDashboardProps) => {
 
       <div className="p-6">
         <Tabs defaultValue="operators" className="space-y-6">
-          <TabsList className="bg-white shadow-sm">
-            <TabsTrigger value="operators" className="gap-2">
+          <TabsList className="bg-gray-800 shadow-sm border border-purple-500/30">
+            <TabsTrigger value="operators" className="gap-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white">
               <Icon name="Users" size={18} />
               Операторы
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="gap-2">
+            <TabsTrigger value="analytics" className="gap-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white">
               <Icon name="BarChart3" size={18} />
               Аналитика
             </TabsTrigger>
-            <TabsTrigger value="settings" className="gap-2">
+            <TabsTrigger value="settings" className="gap-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white">
               <Icon name="Settings" size={18} />
               Настройки сайта
             </TabsTrigger>

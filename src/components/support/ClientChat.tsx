@@ -3,7 +3,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
+import { useToast } from '@/hooks/use-toast';
 
 interface Message {
   id: number;
@@ -17,6 +19,10 @@ interface ClientChatProps {
 }
 
 const ClientChat = ({ onEmployeeLogin }: ClientChatProps) => {
+  const { toast } = useToast();
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -26,6 +32,17 @@ const ClientChat = ({ onEmployeeLogin }: ClientChatProps) => {
     },
   ]);
   const [inputMessage, setInputMessage] = useState('');
+
+  const handleRegister = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (name.trim() && phone.trim()) {
+      setIsRegistered(true);
+      toast({
+        title: 'Добро пожаловать!',
+        description: 'Оператор свяжется с вами в ближайшее время',
+      });
+    }
+  };
 
   const sendMessage = () => {
     if (!inputMessage.trim()) return;
@@ -47,16 +64,79 @@ const ClientChat = ({ onEmployeeLogin }: ClientChatProps) => {
     }
   };
 
+  if (!isRegistered) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md shadow-2xl bg-gray-800 border-purple-500/30">
+          <div className="bg-gradient-to-r from-purple-600 to-violet-600 p-6 rounded-t-lg">
+            <div className="flex items-center gap-3 justify-center">
+              <Icon name="Headphones" size={32} className="text-white" />
+              <div>
+                <h1 className="text-2xl font-bold text-white">Поддержка клиентов</h1>
+                <p className="text-purple-100 text-sm">Мы готовы помочь вам</p>
+              </div>
+            </div>
+          </div>
+
+          <form onSubmit={handleRegister} className="p-6 space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-gray-200">Ваше имя</Label>
+              <Input
+                id="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Введите ваше имя"
+                required
+                autoFocus
+                className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="phone" className="text-gray-200">Номер телефона</Label>
+              <Input
+                id="phone"
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="+7 (___) ___-__-__"
+                required
+                className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+              />
+            </div>
+
+            <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 text-white">
+              <Icon name="MessageSquare" size={18} className="mr-2" />
+              Начать чат
+            </Button>
+          </form>
+
+          <div className="px-6 pb-6">
+            <Button
+              variant="ghost"
+              onClick={onEmployeeLogin}
+              className="w-full text-gray-400 hover:text-purple-400 hover:bg-gray-700/50"
+            >
+              <Icon name="UserCog" size={18} className="mr-2" />
+              Вход для сотрудников
+            </Button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <Card className="w-full max-w-2xl shadow-2xl">
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-t-lg">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center p-4">
+      <Card className="w-full max-w-2xl shadow-2xl bg-gray-800 border-purple-500/30">
+        <div className="bg-gradient-to-r from-purple-600 to-violet-600 p-6 rounded-t-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Icon name="Headphones" size={28} />
+              <Icon name="Headphones" size={28} className="text-white" />
               <div>
-                <h1 className="text-2xl font-bold">Поддержка</h1>
-                <p className="text-blue-100 text-sm">Мы онлайн и готовы помочь</p>
+                <h1 className="text-2xl font-bold text-white">Поддержка</h1>
+                <p className="text-purple-100 text-sm">Здравствуйте, {name}!</p>
               </div>
             </div>
             <Button
@@ -66,12 +146,12 @@ const ClientChat = ({ onEmployeeLogin }: ClientChatProps) => {
               className="text-white hover:bg-white/20"
             >
               <Icon name="UserCog" size={18} className="mr-2" />
-              Вход для сотрудников
+              Для сотрудников
             </Button>
           </div>
         </div>
 
-        <ScrollArea className="h-96 p-6 bg-white">
+        <ScrollArea className="h-96 p-6 bg-gray-900">
           <div className="space-y-4">
             {messages.map((message) => (
               <div
@@ -83,8 +163,8 @@ const ClientChat = ({ onEmployeeLogin }: ClientChatProps) => {
                 <div
                   className={`max-w-xs px-4 py-2 rounded-2xl ${
                     message.sender === 'client'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-200 text-gray-800'
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-gray-700 text-gray-100'
                   }`}
                 >
                   <p>{message.text}</p>
@@ -100,16 +180,16 @@ const ClientChat = ({ onEmployeeLogin }: ClientChatProps) => {
           </div>
         </ScrollArea>
 
-        <div className="p-4 bg-gray-50 rounded-b-lg border-t">
+        <div className="p-4 bg-gray-800 rounded-b-lg border-t border-gray-700">
           <div className="flex gap-2">
             <Input
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Напишите сообщение..."
-              className="flex-1"
+              className="flex-1 bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
             />
-            <Button onClick={sendMessage} className="bg-blue-600 hover:bg-blue-700">
+            <Button onClick={sendMessage} className="bg-purple-600 hover:bg-purple-700">
               <Icon name="Send" size={18} />
             </Button>
           </div>

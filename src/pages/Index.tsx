@@ -1,50 +1,39 @@
-import { useState } from 'react';
-import ClientChat from '@/components/support/ClientChat';
-import LoginPage from '@/components/support/LoginPage';
-import OperatorDashboard from '@/components/support/OperatorDashboard';
-import AdminDashboard from '@/components/support/AdminDashboard';
-
-type UserRole = 'client' | 'operator' | 'admin' | null;
-
-interface User {
-  login: string;
-  role: UserRole;
-}
+import { useState, useEffect } from 'react';
+import { ClientChat } from '@/components/ClientChat';
+import { LoginForm } from '@/components/LoginForm';
+import { EmployeeDashboard } from '@/components/EmployeeDashboard';
 
 const Index = () => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<any>(null);
 
-  const handleLogin = (login: string, password: string) => {
-    if (login === '123' && password === '803254') {
-      setUser({ login: '123', role: 'admin' });
-      return true;
+  useEffect(() => {
+    const storedUser = localStorage.getItem('support_user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
     }
-    
-    if (login && password) {
-      setUser({ login, role: 'operator' });
-      return true;
-    }
-    
-    return false;
+  }, []);
+
+  const handleLogin = (userData: any) => {
+    setUser(userData);
+    localStorage.setItem('support_user', JSON.stringify(userData));
   };
 
   const handleLogout = () => {
     setUser(null);
+    localStorage.removeItem('support_user');
   };
 
-  if (!user) {
-    return <ClientChat onEmployeeLogin={() => setUser({ login: '', role: null })} />;
+  const queryParams = new URLSearchParams(window.location.search);
+  const isEmployee = queryParams.get('mode') === 'employee';
+
+  if (isEmployee) {
+    if (!user) {
+      return <LoginForm onLogin={handleLogin} />;
+    }
+    return <EmployeeDashboard user={user} onLogout={handleLogout} />;
   }
 
-  if (user.role === null) {
-    return <LoginPage onLogin={handleLogin} onBack={() => setUser(null)} />;
-  }
-
-  if (user.role === 'admin') {
-    return <AdminDashboard user={user} onLogout={handleLogout} />;
-  }
-
-  return <OperatorDashboard user={user} onLogout={handleLogout} />;
+  return <ClientChat />;
 };
 
 export default Index;

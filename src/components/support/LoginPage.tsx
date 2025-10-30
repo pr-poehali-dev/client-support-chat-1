@@ -34,19 +34,19 @@ const LoginPage = ({ onLogin, onBack }: LoginPageProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-700 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md p-8 shadow-2xl">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md p-8 shadow-2xl bg-gray-800 border-purple-500/30">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-600 rounded-full mb-4">
             <Icon name="ShieldCheck" size={32} className="text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Вход для сотрудников</h1>
-          <p className="text-gray-600">Введите ваши учетные данные</p>
+          <h1 className="text-3xl font-bold text-white mb-2">Вход для сотрудников</h1>
+          <p className="text-gray-400">Введите ваши учетные данные</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="login">Логин</Label>
+            <Label htmlFor="login" className="text-gray-200">Логин</Label>
             <Input
               id="login"
               type="text"
@@ -55,11 +55,12 @@ const LoginPage = ({ onLogin, onBack }: LoginPageProps) => {
               placeholder="Введите логин"
               required
               autoFocus
+              className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Пароль</Label>
+            <Label htmlFor="password" className="text-gray-200">Пароль</Label>
             <Input
               id="password"
               type="password"
@@ -67,10 +68,11 @@ const LoginPage = ({ onLogin, onBack }: LoginPageProps) => {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Введите пароль"
               required
+              className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
             />
           </div>
 
-          <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
+          <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 text-white">
             <Icon name="LogIn" size={18} className="mr-2" />
             Войти
           </Button>
@@ -80,7 +82,7 @@ const LoginPage = ({ onLogin, onBack }: LoginPageProps) => {
           <Button
             variant="ghost"
             onClick={onBack}
-            className="w-full text-gray-600 hover:text-gray-900"
+            className="w-full text-gray-400 hover:text-purple-400 hover:bg-gray-700/50"
           >
             <Icon name="ArrowLeft" size={18} className="mr-2" />
             Вернуться к чату

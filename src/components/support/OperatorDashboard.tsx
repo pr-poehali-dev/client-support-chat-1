@@ -59,27 +59,27 @@ const OperatorDashboard = ({ user, onLogout }: OperatorDashboardProps) => {
   const currentStatus = statusConfig[status];
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="bg-white shadow-sm border-b">
+    <div className="min-h-screen bg-gray-900">
+      <header className="bg-gray-800 shadow-lg border-b border-purple-500/30">
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center gap-4">
-            <Icon name="Headphones" size={28} className="text-blue-600" />
-            <h1 className="text-2xl font-bold text-gray-900">Панель оператора</h1>
+            <Icon name="Headphones" size={28} className="text-purple-400" />
+            <h1 className="text-2xl font-bold text-white">Панель оператора</h1>
           </div>
 
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">Статус:</span>
+              <span className="text-sm text-gray-400">Статус:</span>
               <Select value={status} onValueChange={(v) => setStatus(v as OperatorStatus)}>
-                <SelectTrigger className="w-48">
+                <SelectTrigger className="w-48 bg-gray-700 border-gray-600 text-white">
                   <div className="flex items-center gap-2">
                     <span className={`w-2 h-2 rounded-full ${currentStatus.color}`} />
                     <SelectValue />
                   </div>
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-gray-700 border-gray-600">
                   {Object.entries(statusConfig).map(([key, config]) => (
-                    <SelectItem key={key} value={key}>
+                    <SelectItem key={key} value={key} className="text-white focus:bg-gray-600">
                       <div className="flex items-center gap-2">
                         <span className={`w-2 h-2 rounded-full ${config.color}`} />
                         <span>{config.label}</span>
@@ -90,12 +90,12 @@ const OperatorDashboard = ({ user, onLogout }: OperatorDashboardProps) => {
               </Select>
             </div>
 
-            <div className="flex items-center gap-2 text-gray-700">
+            <div className="flex items-center gap-2 text-gray-300">
               <Icon name="User" size={18} />
               <span className="font-medium">{user.login}</span>
             </div>
 
-            <Button variant="outline" onClick={onLogout}>
+            <Button variant="outline" onClick={onLogout} className="border-gray-600 text-gray-300 hover:bg-gray-700">
               <Icon name="LogOut" size={18} className="mr-2" />
               Выход
             </Button>
@@ -104,10 +104,10 @@ const OperatorDashboard = ({ user, onLogout }: OperatorDashboardProps) => {
       </header>
 
       <div className="flex h-[calc(100vh-73px)]">
-        <div className="w-80 bg-white border-r">
-          <div className="p-4 border-b">
-            <h2 className="font-semibold text-gray-900 mb-2">Активные диалоги</h2>
-            <p className="text-sm text-gray-600">{chatSessions.length} диалогов</p>
+        <div className="w-80 bg-gray-800 border-r border-gray-700">
+          <div className="p-4 border-b border-gray-700">
+            <h2 className="font-semibold text-white mb-2">Активные диалоги</h2>
+            <p className="text-sm text-gray-400">{chatSessions.length} диалогов</p>
           </div>
 
           <ScrollArea className="h-[calc(100%-100px)]">
@@ -115,17 +115,17 @@ const OperatorDashboard = ({ user, onLogout }: OperatorDashboardProps) => {
               <div
                 key={chat.id}
                 onClick={() => setActiveChat(chat.id)}
-                className={`p-4 border-b cursor-pointer hover:bg-gray-50 ${
-                  activeChat === chat.id ? 'bg-blue-50' : ''
+                className={`p-4 border-b border-gray-700 cursor-pointer hover:bg-gray-700/50 ${
+                  activeChat === chat.id ? 'bg-purple-900/30' : ''
                 }`}
               >
                 <div className="flex items-start justify-between mb-1">
-                  <p className="font-medium text-gray-900">{chat.clientName}</p>
+                  <p className="font-medium text-white">{chat.clientName}</p>
                   {chat.unread > 0 && (
                     <Badge className="bg-red-500">{chat.unread}</Badge>
                   )}
                 </div>
-                <p className="text-sm text-gray-600 truncate">{chat.lastMessage}</p>
+                <p className="text-sm text-gray-400 truncate">{chat.lastMessage}</p>
                 <p className="text-xs text-gray-500 mt-1">
                   {chat.timestamp.toLocaleTimeString('ru-RU', {
                     hour: '2-digit',
@@ -140,22 +140,22 @@ const OperatorDashboard = ({ user, onLogout }: OperatorDashboardProps) => {
         <div className="flex-1 flex flex-col">
           {activeChat ? (
             <>
-              <div className="p-4 bg-white border-b">
-                <h3 className="font-semibold text-gray-900">
+              <div className="p-4 bg-gray-800 border-b border-gray-700">
+                <h3 className="font-semibold text-white">
                   {chatSessions.find((c) => c.id === activeChat)?.clientName}
                 </h3>
               </div>
 
-              <ScrollArea className="flex-1 p-6 bg-gray-50">
+              <ScrollArea className="flex-1 p-6 bg-gray-900">
                 <div className="space-y-4">
                   <div className="flex justify-start">
-                    <div className="max-w-xs px-4 py-2 rounded-2xl bg-white text-gray-800 shadow-sm">
+                    <div className="max-w-xs px-4 py-2 rounded-2xl bg-gray-800 text-gray-100 shadow-sm border border-gray-700">
                       <p>Здравствуйте! У меня вопрос по заказу</p>
                       <p className="text-xs mt-1 text-gray-500">14:30</p>
                     </div>
                   </div>
                   <div className="flex justify-end">
-                    <div className="max-w-xs px-4 py-2 rounded-2xl bg-blue-600 text-white shadow-sm">
+                    <div className="max-w-xs px-4 py-2 rounded-2xl bg-purple-600 text-white shadow-sm">
                       <p>Здравствуйте! Готов помочь. Какой номер заказа?</p>
                       <p className="text-xs mt-1 opacity-70">14:31</p>
                     </div>
@@ -163,22 +163,22 @@ const OperatorDashboard = ({ user, onLogout }: OperatorDashboardProps) => {
                 </div>
               </ScrollArea>
 
-              <div className="p-4 bg-white border-t">
+              <div className="p-4 bg-gray-800 border-t border-gray-700">
                 <div className="flex gap-2">
                   <Input
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Введите сообщение..."
-                    className="flex-1"
+                    className="flex-1 bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
                   />
-                  <Button className="bg-blue-600 hover:bg-blue-700">
+                  <Button className="bg-purple-600 hover:bg-purple-700">
                     <Icon name="Send" size={18} />
                   </Button>
                 </div>
               </div>
             </>
           ) : (
-            <div className="flex-1 flex items-center justify-center bg-gray-50">
+            <div className="flex-1 flex items-center justify-center bg-gray-900">
               <div className="text-center text-gray-500">
                 <Icon name="MessageSquare" size={64} className="mx-auto mb-4 opacity-20" />
                 <p>Выберите диалог для начала общения</p>
