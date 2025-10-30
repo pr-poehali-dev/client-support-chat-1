@@ -63,77 +63,114 @@ const AdminDashboard = ({ user, onLogout }: AdminDashboardProps) => {
   };
 
   const [activeTab, setActiveTab] = useState('operators');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
     <div className="min-h-screen bg-gray-900 flex">
       {/* Sidebar */}
-      <div className="w-64 bg-gray-800 border-r border-purple-500/30 flex flex-col">
-        <div className="p-6 bg-gradient-to-br from-purple-600 to-violet-600">
-          <div className="flex items-center gap-3 mb-2">
-            <Icon name="Shield" size={28} className="text-white" />
-            <h1 className="text-lg font-bold text-white">Супер-Админ</h1>
-          </div>
-          <p className="text-xs text-purple-100">Полный контроль системы</p>
+      <div className={`${sidebarCollapsed ? 'w-20' : 'w-64'} bg-gray-800 border-r border-purple-500/30 flex flex-col transition-all duration-300`}>
+        <div className="p-6 bg-gradient-to-br from-purple-600 to-violet-600 relative">
+          <button
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className="absolute top-4 right-4 p-1 hover:bg-purple-500/50 rounded transition-colors"
+          >
+            <Icon name={sidebarCollapsed ? 'ChevronRight' : 'ChevronLeft'} size={20} className="text-white" />
+          </button>
+          {!sidebarCollapsed && (
+            <>
+              <div className="flex items-center gap-3 mb-2">
+                <Icon name="Shield" size={28} className="text-white" />
+                <h1 className="text-lg font-bold text-white">Супер-Админ</h1>
+              </div>
+              <p className="text-xs text-purple-100">Полный контроль системы</p>
+            </>
+          )}
+          {sidebarCollapsed && (
+            <div className="flex justify-center">
+              <Icon name="Shield" size={28} className="text-white" />
+            </div>
+          )}
         </div>
 
         <div className="flex-1 p-4">
           <nav className="space-y-2">
             <button
               onClick={() => setActiveTab('operators')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-3'} px-4 py-3 rounded-lg transition-colors ${
                 activeTab === 'operators'
                   ? 'bg-purple-600 text-white'
                   : 'text-gray-300 hover:bg-gray-700'
               }`}
+              title={sidebarCollapsed ? 'Операторы' : ''}
             >
               <Icon name="Users" size={20} />
-              <span className="font-medium">Операторы</span>
+              {!sidebarCollapsed && <span className="font-medium">Операторы</span>}
             </button>
             <button
               onClick={() => setActiveTab('analytics')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-3'} px-4 py-3 rounded-lg transition-colors ${
                 activeTab === 'analytics'
                   ? 'bg-purple-600 text-white'
                   : 'text-gray-300 hover:bg-gray-700'
               }`}
+              title={sidebarCollapsed ? 'Аналитика' : ''}
             >
               <Icon name="BarChart3" size={20} />
-              <span className="font-medium">Аналитика</span>
+              {!sidebarCollapsed && <span className="font-medium">Аналитика</span>}
             </button>
             <button
               onClick={() => setActiveTab('settings')}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-3'} px-4 py-3 rounded-lg transition-colors ${
                 activeTab === 'settings'
                   ? 'bg-purple-600 text-white'
                   : 'text-gray-300 hover:bg-gray-700'
               }`}
+              title={sidebarCollapsed ? 'Настройки' : ''}
             >
               <Icon name="Settings" size={20} />
-              <span className="font-medium">Настройки</span>
+              {!sidebarCollapsed && <span className="font-medium">Настройки</span>}
             </button>
           </nav>
         </div>
 
         <div className="p-4 border-t border-gray-700">
-          <div className="flex items-center gap-3 mb-3">
-            <Badge className="bg-yellow-500 text-yellow-900">
-              <Icon name="Crown" size={14} className="mr-1" />
-              Админ
-            </Badge>
-          </div>
-          <div className="flex items-center gap-2 text-gray-300 mb-3">
-            <Icon name="User" size={16} />
-            <span className="text-sm font-medium">{user.login}</span>
-          </div>
-          <Button 
-            variant="secondary" 
-            onClick={onLogout}
-            className="w-full justify-start"
-            size="sm"
-          >
-            <Icon name="LogOut" size={16} className="mr-2" />
-            Выход
-          </Button>
+          {!sidebarCollapsed && (
+            <>
+              <div className="flex items-center gap-3 mb-3">
+                <Badge className="bg-yellow-500 text-yellow-900">
+                  <Icon name="Crown" size={14} className="mr-1" />
+                  Админ
+                </Badge>
+              </div>
+              <div className="flex items-center gap-2 text-gray-300 mb-3">
+                <Icon name="User" size={16} />
+                <span className="text-sm font-medium">{user.login}</span>
+              </div>
+              <Button 
+                variant="secondary" 
+                onClick={onLogout}
+                className="w-full justify-start"
+                size="sm"
+              >
+                <Icon name="LogOut" size={16} className="mr-2" />
+                Выход
+              </Button>
+            </>
+          )}
+          {sidebarCollapsed && (
+            <div className="flex flex-col gap-3 items-center">
+              <Icon name="Crown" size={20} className="text-yellow-500" />
+              <Button 
+                variant="secondary" 
+                onClick={onLogout}
+                className="w-full p-2 flex justify-center"
+                size="sm"
+                title="Выход"
+              >
+                <Icon name="LogOut" size={16} />
+              </Button>
+            </div>
+          )}
         </div>
       </div>
 
