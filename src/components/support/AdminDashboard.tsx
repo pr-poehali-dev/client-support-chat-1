@@ -109,8 +109,8 @@ const AdminDashboard = ({ user, onLogout }: AdminDashboardProps) => {
           </TabsList>
 
           <TabsContent value="operators" className="space-y-4">
-            <Card className="p-6">
-              <h2 className="text-xl font-bold mb-4">Управление операторами</h2>
+            <Card className="p-6 bg-gray-800 border-purple-500/30">
+              <h2 className="text-xl font-bold mb-4 text-white">Управление операторами</h2>
               
               <div className="grid gap-4">
                 {operators.map((operator) => {
@@ -118,31 +118,31 @@ const AdminDashboard = ({ user, onLogout }: AdminDashboardProps) => {
                   return (
                     <div
                       key={operator.id}
-                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border"
+                      className="flex items-center justify-between p-4 bg-gray-700 rounded-lg border border-gray-600"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                          <Icon name="User" size={24} className="text-purple-600" />
+                        <div className="w-12 h-12 bg-purple-900/50 rounded-full flex items-center justify-center">
+                          <Icon name="User" size={24} className="text-purple-400" />
                         </div>
                         <div>
-                          <p className="font-semibold text-gray-900">{operator.name}</p>
+                          <p className="font-semibold text-white">{operator.name}</p>
                           <div className="flex items-center gap-2 mt-1">
                             <span className={`w-2 h-2 rounded-full ${status.color}`} />
-                            <span className="text-sm text-gray-600">{status.label}</span>
+                            <span className="text-sm text-gray-300">{status.label}</span>
                           </div>
                         </div>
                       </div>
 
                       <div className="flex items-center gap-6">
                         <div className="text-center">
-                          <p className="text-2xl font-bold text-gray-900">{operator.activeChats}</p>
-                          <p className="text-xs text-gray-600">Активных</p>
+                          <p className="text-2xl font-bold text-white">{operator.activeChats}</p>
+                          <p className="text-xs text-gray-400">Активных</p>
                         </div>
                         <div className="text-center">
-                          <p className="text-2xl font-bold text-gray-900">{operator.totalChats}</p>
-                          <p className="text-xs text-gray-600">Всего</p>
+                          <p className="text-2xl font-bold text-white">{operator.totalChats}</p>
+                          <p className="text-xs text-gray-400">Всего</p>
                         </div>
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" className="border-gray-600 text-gray-300 hover:bg-gray-600">
                           <Icon name="Settings" size={16} className="mr-2" />
                           Управление
                         </Button>
@@ -161,40 +161,40 @@ const AdminDashboard = ({ user, onLogout }: AdminDashboardProps) => {
 
           <TabsContent value="analytics" className="space-y-4">
             <div className="grid md:grid-cols-3 gap-4">
-              <Card className="p-6">
+              <Card className="p-6 bg-gray-800 border-purple-500/30">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Всего диалогов</p>
-                    <p className="text-3xl font-bold text-gray-900 mt-2">142</p>
+                    <p className="text-sm text-gray-400">Всего диалогов</p>
+                    <p className="text-3xl font-bold text-white mt-2">142</p>
                   </div>
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                    <Icon name="MessageSquare" size={24} className="text-blue-600" />
+                  <div className="w-12 h-12 bg-blue-900/50 rounded-full flex items-center justify-center">
+                    <Icon name="MessageSquare" size={24} className="text-blue-400" />
                   </div>
                 </div>
               </Card>
 
-              <Card className="p-6">
+              <Card className="p-6 bg-gray-800 border-purple-500/30">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Активных операторов</p>
-                    <p className="text-3xl font-bold text-gray-900 mt-2">
+                    <p className="text-sm text-gray-400">Активных операторов</p>
+                    <p className="text-3xl font-bold text-white mt-2">
                       {operators.filter((o) => o.status === 'online').length}
                     </p>
                   </div>
-                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                    <Icon name="Users" size={24} className="text-green-600" />
+                  <div className="w-12 h-12 bg-green-900/50 rounded-full flex items-center justify-center">
+                    <Icon name="Users" size={24} className="text-green-400" />
                   </div>
                 </div>
               </Card>
 
-              <Card className="p-6">
+              <Card className="p-6 bg-gray-800 border-purple-500/30">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Среднее время ответа</p>
-                    <p className="text-3xl font-bold text-gray-900 mt-2">2.3м</p>
+                    <p className="text-sm text-gray-400">Среднее время ответа</p>
+                    <p className="text-3xl font-bold text-white mt-2">2.3м</p>
                   </div>
-                  <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
-                    <Icon name="Clock" size={24} className="text-yellow-600" />
+                  <div className="w-12 h-12 bg-yellow-900/50 rounded-full flex items-center justify-center">
+                    <Icon name="Clock" size={24} className="text-yellow-400" />
                   </div>
                 </div>
               </Card>
@@ -202,12 +202,13 @@ const AdminDashboard = ({ user, onLogout }: AdminDashboardProps) => {
           </TabsContent>
 
           <TabsContent value="settings" className="space-y-4">
-            <Card className="p-6">
+            <Card className="p-6 bg-gray-800 border-purple-500/30">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold">Настройки внешнего вида</h2>
+                <h2 className="text-xl font-bold text-white">Настройки внешнего вида</h2>
                 <Button
                   variant={editMode ? 'default' : 'outline'}
                   onClick={() => setEditMode(!editMode)}
+                  className={editMode ? 'bg-purple-600 hover:bg-purple-700' : 'border-gray-600 text-gray-300 hover:bg-gray-700'}
                 >
                   <Icon name={editMode ? 'Save' : 'Edit'} size={18} className="mr-2" />
                   {editMode ? 'Готово' : 'Редактировать'}
@@ -216,28 +217,30 @@ const AdminDashboard = ({ user, onLogout }: AdminDashboardProps) => {
 
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="title">Заголовок чата</Label>
+                  <Label htmlFor="title" className="text-gray-200">Заголовок чата</Label>
                   <Input
                     id="title"
                     value={siteSettings.title}
                     onChange={(e) => setSiteSettings({ ...siteSettings, title: e.target.value })}
                     disabled={!editMode}
+                    className="bg-gray-700 border-gray-600 text-white"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="welcome">Приветственное сообщение</Label>
+                  <Label htmlFor="welcome" className="text-gray-200">Приветственное сообщение</Label>
                   <Textarea
                     id="welcome"
                     value={siteSettings.welcomeMessage}
                     onChange={(e) => setSiteSettings({ ...siteSettings, welcomeMessage: e.target.value })}
                     disabled={!editMode}
                     rows={3}
+                    className="bg-gray-700 border-gray-600 text-white"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="color">Основной цвет</Label>
+                  <Label htmlFor="color" className="text-gray-200">Основной цвет</Label>
                   <div className="flex gap-2">
                     <Input
                       id="color"
@@ -245,12 +248,13 @@ const AdminDashboard = ({ user, onLogout }: AdminDashboardProps) => {
                       value={siteSettings.primaryColor}
                       onChange={(e) => setSiteSettings({ ...siteSettings, primaryColor: e.target.value })}
                       disabled={!editMode}
-                      className="w-20 h-10"
+                      className="w-20 h-10 bg-gray-700 border-gray-600"
                     />
                     <Input
                       value={siteSettings.primaryColor}
                       onChange={(e) => setSiteSettings({ ...siteSettings, primaryColor: e.target.value })}
                       disabled={!editMode}
+                      className="bg-gray-700 border-gray-600 text-white"
                     />
                   </div>
                 </div>
@@ -263,22 +267,22 @@ const AdminDashboard = ({ user, onLogout }: AdminDashboardProps) => {
                 )}
               </div>
 
-              <div className="mt-8 pt-6 border-t">
-                <h3 className="font-semibold mb-4 text-gray-900">Дополнительные возможности</h3>
+              <div className="mt-8 pt-6 border-t border-gray-700">
+                <h3 className="font-semibold mb-4 text-white">Дополнительные возможности</h3>
                 <div className="grid md:grid-cols-2 gap-4">
-                  <Button variant="outline" className="justify-start">
+                  <Button variant="outline" className="justify-start border-gray-600 text-gray-300 hover:bg-gray-700">
                     <Icon name="Palette" size={18} className="mr-2" />
                     Темы оформления
                   </Button>
-                  <Button variant="outline" className="justify-start">
+                  <Button variant="outline" className="justify-start border-gray-600 text-gray-300 hover:bg-gray-700">
                     <Icon name="Bell" size={18} className="mr-2" />
                     Уведомления
                   </Button>
-                  <Button variant="outline" className="justify-start">
+                  <Button variant="outline" className="justify-start border-gray-600 text-gray-300 hover:bg-gray-700">
                     <Icon name="Mail" size={18} className="mr-2" />
                     Email-интеграции
                   </Button>
-                  <Button variant="outline" className="justify-start">
+                  <Button variant="outline" className="justify-start border-gray-600 text-gray-300 hover:bg-gray-700">
                     <Icon name="Zap" size={18} className="mr-2" />
                     Автоответы
                   </Button>
