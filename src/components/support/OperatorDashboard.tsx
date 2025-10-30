@@ -35,6 +35,7 @@ interface ChatSession {
   timestamp: Date;
   unread: number;
   assignedTo: string;
+  rating?: number;
 }
 
 interface NewsItem {
@@ -57,6 +58,30 @@ const OperatorDashboard = ({ user, onLogout }: OperatorDashboardProps) => {
   const [status, setStatus] = useState<OperatorStatus>('online');
   const [activeChat, setActiveChat] = useState<number | null>(1);
   const [message, setMessage] = useState('');
+  const [showCloseConfirm, setShowCloseConfirm] = useState(false);
+  const [chats, setChats] = useState<ChatSession[]>([]);
+
+  const handleCloseChat = (chatId: number) => {
+    setShowCloseConfirm(true);
+  };
+
+  const confirmCloseChat = () => {
+    const chat = myChats.find(c => c.id === activeChat);
+    if (chat && activeChat) {
+      const ratings = JSON.parse(localStorage.getItem('chatRatings') || '[]');
+      ratings.push({
+        chatId: activeChat,
+        clientName: chat.clientName,
+        clientPhone: chat.clientPhone,
+        operator: user.login,
+        closedAt: new Date().toISOString(),
+        awaitingRating: true
+      });
+      localStorage.setItem('chatRatings', JSON.stringify(ratings));
+      setShowCloseConfirm(false);
+      setActiveChat(null);
+    }
+  };
 
   const allChats: ChatSession[] = [
     {
@@ -228,7 +253,18 @@ const OperatorDashboard = ({ user, onLogout }: OperatorDashboardProps) => {
                             {myChats.find((c) => c.id === activeChat)?.clientPhone}
                           </p>
                         </div>
-                        <Badge className="bg-green-600">Активный</Badge>
+                        <div className="flex gap-2">
+                          <Badge className="bg-green-600">Активный</Badge>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleCloseChat(activeChat)}
+                            className="border-red-500/50 text-red-400 hover:bg-red-500/10"
+                          >
+                            <Icon name="X" size={16} className="mr-1" />
+                            Завершить
+                          </Button>
+                        </div>
                       </div>
                     </div>
 
@@ -365,6 +401,37 @@ const OperatorDashboard = ({ user, onLogout }: OperatorDashboardProps) => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {showCloseConfirm && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <Card className="bg-gray-800 border-purple-500/30 p-6 max-w-md w-full">
+            <div className="text-center">
+              <Icon name="AlertCircle" size={48} className="text-yellow-500 mx-auto mb-4" />
+              <h2 className="text-xl font-bold text-white mb-2">
+                Завершить диалог?
+              </h2>
+              <p className="text-gray-400 mb-6">
+                Клиенту будет предложено оценить качество обслуживания
+              </p>
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowCloseConfirm(false)}
+                  className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700"
+                >
+                  Отмена
+                </Button>
+                <Button
+                  onClick={confirmCloseChat}
+                  className="flex-1 bg-purple-600 hover:bg-purple-700"
+                >
+                  Завершить
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
     </div>
   );
 };

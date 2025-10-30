@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -6,6 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
 import { useToast } from '@/hooks/use-toast';
+import RatingModal from './RatingModal';
 
 interface Message {
   id: number;
@@ -32,6 +33,25 @@ const ClientChat = ({ onEmployeeLogin }: ClientChatProps) => {
     },
   ]);
   const [inputMessage, setInputMessage] = useState('');
+  const [showRating, setShowRating] = useState(false);
+  const [chatId, setChatId] = useState<number | null>(null);
+
+  useEffect(() => {
+    const checkForRatingRequest = () => {
+      const ratings = JSON.parse(localStorage.getItem('chatRatings') || '[]');
+      const pendingRating = ratings.find((r: any) => 
+        r.clientPhone === phone && r.awaitingRating
+      );
+      
+      if (pendingRating && isRegistered) {
+        setShowRating(true);
+        setChatId(pendingRating.chatId);
+      }
+    };
+
+    const interval = setInterval(checkForRatingRequest, 2000);
+    return () => clearInterval(interval);
+  }, [phone, isRegistered]);
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,6 +82,32 @@ const ClientChat = ({ onEmployeeLogin }: ClientChatProps) => {
     if (e.key === 'Enter') {
       sendMessage();
     }
+  };
+
+  const handleRatingSubmit = (rating: number) => {
+    const ratings = JSON.parse(localStorage.getItem('chatRatings') || '[]');
+    const updatedRatings = ratings.map((r: any) => 
+      r.chatId === chatId 
+        ? { ...r, rating, awaitingRating: false, ratedAt: new Date().toISOString() }
+        : r
+    );
+    localStorage.setItem('chatRatings', JSON.stringify(updatedRatings));
+    setShowRating(false);
+    toast({
+      title: 'Спасибо!',
+      description: 'Ваша оценка поможет нам стать лучше',
+    });
+  };
+
+  const handleRatingSkip = () => {
+    const ratings = JSON.parse(localStorage.getItem('chatRatings') || '[]');
+    const updatedRatings = ratings.map((r: any) => 
+      r.chatId === chatId 
+        ? { ...r, awaitingRating: false, skipped: true }
+        : r
+    );
+    localStorage.setItem('chatRatings', JSON.stringify(updatedRatings));
+    setShowRating(false);
   };
 
   if (!isRegistered) {
@@ -195,6 +241,13 @@ const ClientChat = ({ onEmployeeLogin }: ClientChatProps) => {
           </div>
         </div>
       </Card>
+      
+      {showRating && (
+        <RatingModal 
+          onSubmit={handleRatingSubmit}
+          onSkip={handleRatingSkip}
+        />
+      )}
     </div>
   );
 };

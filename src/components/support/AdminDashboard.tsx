@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -63,7 +63,29 @@ const AdminDashboard = ({ user, onLogout }: AdminDashboardProps) => {
   };
 
   const [activeTab, setActiveTab] = useState('operators');
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    const saved = localStorage.getItem('adminSidebarCollapsed');
+    return saved ? JSON.parse(saved) : false;
+  });
+  const [allRatings, setAllRatings] = useState<any[]>([]);
+
+  useEffect(() => {
+    const loadRatings = () => {
+      const ratings = JSON.parse(localStorage.getItem('chatRatings') || '[]');
+      setAllRatings(ratings.filter((r: any) => !r.awaitingRating && r.rating));
+    };
+    loadRatings();
+    const interval = setInterval(loadRatings, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const toggleSidebar = () => {
+    setSidebarCollapsed((prev: boolean) => {
+      const newValue = !prev;
+      localStorage.setItem('adminSidebarCollapsed', JSON.stringify(newValue));
+      return newValue;
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gray-900 flex">
@@ -71,7 +93,7 @@ const AdminDashboard = ({ user, onLogout }: AdminDashboardProps) => {
       <div className={`${sidebarCollapsed ? 'w-20' : 'w-64'} bg-gray-800 border-r border-purple-500/30 flex flex-col transition-all duration-300`}>
         <div className="p-6 bg-gradient-to-br from-purple-600 to-violet-600 relative">
           <button
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            onClick={toggleSidebar}
             className="absolute top-4 right-4 p-1 hover:bg-purple-500/50 rounded transition-colors"
           >
             <Icon name={sidebarCollapsed ? 'ChevronRight' : 'ChevronLeft'} size={20} className="text-white" />
@@ -230,7 +252,7 @@ const AdminDashboard = ({ user, onLogout }: AdminDashboardProps) => {
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-4 p-6">
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-4 gap-4">
               <Card className="p-6 bg-gray-800 border-purple-500/30">
                 <div className="flex items-center justify-between">
                   <div>
@@ -268,7 +290,62 @@ const AdminDashboard = ({ user, onLogout }: AdminDashboardProps) => {
                   </div>
                 </div>
               </Card>
+
+              <Card className="p-6 bg-gray-800 border-purple-500/30">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-400">Средняя оценка QC</p>
+                    <p className="text-3xl font-bold text-white mt-2">
+                      {allRatings.length > 0 
+                        ? (allRatings.reduce((sum, r) => sum + r.rating, 0) / allRatings.length).toFixed(1)
+                        : '—'}
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 bg-purple-900/50 rounded-full flex items-center justify-center">
+                    <Icon name="Star" size={24} className="text-purple-400" />
+                  </div>
+                </div>
+              </Card>
             </div>
+
+            <Card className="p-6 bg-gray-800 border-purple-500/30 mt-6">
+              <h2 className="text-xl font-bold text-white mb-4">Оценки качества (QC)</h2>
+              <ScrollArea className="h-[500px]">
+                <div className="space-y-3">
+                  {allRatings.length === 0 ? (
+                    <div className="text-center py-12">
+                      <Icon name="Star" size={48} className="mx-auto text-gray-600 mb-3" />
+                      <p className="text-gray-400">Оценок пока нет</p>
+                    </div>
+                  ) : (
+                    allRatings.map((rating, idx) => (
+                      <Card key={idx} className="p-4 bg-gray-700 border-gray-600">
+                        <div className="flex justify-between items-start mb-2">
+                          <div>
+                            <p className="font-medium text-white">{rating.clientName}</p>
+                            <p className="text-sm text-gray-400">{rating.clientPhone}</p>
+                            <p className="text-xs text-gray-500 mt-1">Оператор: {rating.operator}</p>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <Icon
+                                key={star}
+                                name="Star"
+                                size={18}
+                                className={star <= rating.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-500">
+                          {new Date(rating.ratedAt).toLocaleString('ru-RU')}
+                        </p>
+                      </Card>
+                    ))
+                  )}
+                </div>
+              </ScrollArea>
+            </Card>
           </TabsContent>
 
           <TabsContent value="settings" className="space-y-4 p-6">
